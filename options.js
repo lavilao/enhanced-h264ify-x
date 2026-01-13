@@ -12,6 +12,7 @@ function save_options() {
   // -x
   var max_res = document.getElementById("max_res").checked;
   var res_setting = document.querySelector(`input[name="res_setting"]:checked`).value;
+  var battery_only = document.getElementById('battery_only').checked;
   chrome.storage.local.set({
     block_60fps: block_60fps,
     block_h264: block_h264,
@@ -22,7 +23,8 @@ function save_options() {
     block_mp4a: block_mp4a,
     disable_LN: disable_LN,
     max_res: max_res,
-    res_setting: res_setting
+    res_setting: res_setting,
+    battery_only: battery_only
   });
 }
 
@@ -39,7 +41,8 @@ function restore_options() {
     block_mp4a: false,
     disable_LN: false,
     max_res: true,
-    res_setting: "1080"
+    res_setting: "1080",
+    battery_only: false
   }, function(options) {
     document.getElementById('block_60fps').checked = options.block_60fps;
     document.getElementById('block_h264').checked = options.block_h264;
@@ -50,6 +53,7 @@ function restore_options() {
     document.getElementById('block_mp4a').checked = options.block_mp4a;
     document.getElementById('disable_LN').checked = options.disable_LN;
     document.getElementById('max_res').checked = options.max_res;
+    document.getElementById('battery_only').checked = options.battery_only;
     let res_setting = options.res_setting;
     if (res_setting !=="max" && parseInt(res_setting, 10) == NaN) res_setting = "1080";
     document.querySelector(`input[name="res_setting"][value="${res_setting}"]`).checked = true;

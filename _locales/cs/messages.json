@@ -54,6 +54,10 @@
 
   "optionsTitleAudio": {
     "message": "Zvuk"
+  },
+
+  "optionsBatteryOnly": {
+    "message": "Pouze na baterii"
   }
 
 }

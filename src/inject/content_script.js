@@ -58,6 +58,9 @@ if (localStorage['enhanced-h264ify-max_res'] === undefined) {
 if (localStorage['enhanced-h264ify-res_setting'] === undefined) {
   localStorage['enhanced-h264ify-res_setting'] = "1080";
 }
+if (localStorage['enhanced-h264ify-battery_only'] === undefined) {
+  localStorage['enhanced-h264ify-battery_only'] = false;
+}
 
 // Cache chrome.storage.local options in localStorage.
 // This is needed because chrome.storage.local.get() is async and we want to
@@ -74,7 +77,8 @@ chrome.storage.local.get({
   block_mp4a: false,
   disable_LN: false,
   max_res: true,
-  res_setting: "1080"
+  res_setting: "1080",
+  battery_only: false
  }, function(options) {
    localStorage['enhanced-h264ify-block_60fps'] = options.block_60fps;
    localStorage['enhanced-h264ify-block_h264'] = options.block_h264;
@@ -86,7 +90,8 @@ chrome.storage.local.get({
    localStorage['enhanced-h264ify-disable_LN'] = options.disable_LN;
    localStorage['enhanced-h264ify-max_res'] = options.max_res;
    localStorage['enhanced-h264ify-res_setting'] = options.res_setting;
- }
+   localStorage['enhanced-h264ify-battery_only'] = options.battery_only;
+  }
 );
 
 /*

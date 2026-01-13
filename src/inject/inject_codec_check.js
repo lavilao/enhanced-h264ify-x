@@ -38,6 +38,19 @@
         mse.isTypeSupported = makeModifiedTypeChecker(origIsTypeSupported);
     }
 
+    // Check battery status if battery_only is enabled
+    if (localStorage["enhanced-h264ify-battery_only"] === "true" && navigator.getBattery) {
+        navigator.getBattery().then(function(battery) {
+            if (!battery.charging) {
+                override();
+            }
+        }).catch(function() {
+            override();
+        });
+    } else {
+        override();
+    }
+
     // return a custom MIME type checker that can defer to the original function
     function makeModifiedTypeChecker(origChecker) {
         // Check if a video type is allowed

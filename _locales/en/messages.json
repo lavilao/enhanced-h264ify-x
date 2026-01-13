@@ -54,5 +54,9 @@
 
   "optionsTitleAudio": {
     "message": "Audio"
+  },
+
+  "optionsBatteryOnly": {
+    "message": "Only on battery"
   }
 }

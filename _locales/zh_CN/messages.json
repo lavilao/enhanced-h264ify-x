@@ -53,6 +53,10 @@
   },
 
   "optionsTitleAudio": {
-    "message": "音訊"
+    "message": "音讯"
+  },
+
+  "optionsBatteryOnly": {
+    "message": "仅使用电池时"
   }
 }

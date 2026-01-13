@@ -54,6 +54,11 @@
 
   "optionsTitleAudio": {
     "message": "Аудио"
+  },
+
+  "optionsBatteryOnly": {
+    "message": "Только на батарее"
   }
+}
 
 }

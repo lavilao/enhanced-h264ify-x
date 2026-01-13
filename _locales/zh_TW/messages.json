@@ -54,5 +54,9 @@
 
   "optionsTitleAudio": {
     "message": "音訊"
+  },
+
+  "optionsBatteryOnly": {
+    "message": "僅用電池時"
   }
 }
