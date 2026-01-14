@@ -124,8 +124,6 @@
         };
     }
 
-    override();
-
     const sessionData = {
         id: {
             last_id: "enhanced-h264ify-last_id",
