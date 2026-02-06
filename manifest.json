@@ -48,5 +48,15 @@
   "permissions": [
     "scripting",
     "storage"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["src/inject/inject_codec_check.js"],
+      "matches": [
+        "*://*.youtube.com/*",
+        "*://*.youtube-nocookie.com/*",
+        "*://*.youtu.be/*"
+      ]
+    }
   ]
 }

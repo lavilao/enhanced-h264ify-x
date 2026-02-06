@@ -91,19 +91,52 @@ chrome.storage.local.get({
    localStorage['enhanced-h264ify-max_res'] = options.max_res;
    localStorage['enhanced-h264ify-res_setting'] = options.res_setting;
    localStorage['enhanced-h264ify-battery_only'] = options.battery_only;
+   
+   // Inject the codec check script with embedded settings
+   // This works around Chrome 144+ restrictions on MAIN world content scripts
+   injectScriptWithSettings(options);
   }
 );
 
-/*
-const injectScript = document.createElement('script');
-// Use textContent instead of src to run inject() synchronously
-injectScript.src = chrome.runtime.getURL("/src/inject/inject_codec_check.js");
-injectScript.onload = function() {
-  // Remove <script> node after injectScript runs.
-  this.parentNode.removeChild(this);
-};
-(document.head || document.documentElement).appendChild(injectScript);
-*/
+// Inject settings and codec check script into page context
+// This is needed because Chrome 144+ restricts API access in MAIN world content scripts
+async function injectScriptWithSettings(options) {
+  try {
+    // Fetch the script content
+    const response = await fetch(chrome.runtime.getURL('/src/inject/inject_codec_check.js'));
+    const scriptContent = await response.text();
+    
+    // Create script element
+    const injectScript = document.createElement('script');
+    
+    // Embed settings as a global config object, then run the actual script
+    const configScript = `
+      window.__enhanced_h264ify_config__ = {
+        block_60fps: ${options.block_60fps},
+        block_h264: ${options.block_h264},
+        block_vp8: ${options.block_vp8},
+        block_vp9: ${options.block_vp9},
+        block_av1: ${options.block_av1},
+        block_opus: ${options.block_opus},
+        block_mp4a: ${options.block_mp4a},
+        disable_LN: ${options.disable_LN},
+        max_res: ${options.max_res},
+        res_setting: "${options.res_setting}",
+        battery_only: ${options.battery_only}
+      };
+    `;
+    
+    injectScript.textContent = configScript + '\n' + scriptContent;
+    
+    injectScript.onload = function() {
+      this.remove();
+    };
+    
+    (document.head || document.documentElement).appendChild(injectScript);
+  } catch (error) {
+    console.error('enhanced-h264ify: Failed to inject script:', error);
+  }
+}
 
 /*
 document.onreadystatechange = function() {

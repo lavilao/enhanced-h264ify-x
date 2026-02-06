@@ -24,6 +24,17 @@
  */
 
 (function() {
+    // Default settings - will be overridden if config is injected
+    const config = window.__enhanced_h264ify_config__ || {};
+    
+    // Helper to get settings with fallback chain: injected config -> localStorage -> default
+    function getSetting(key, defaultValue) {
+        const fullKey = 'enhanced-h264ify-' + key;
+        if (config[key] !== undefined) return config[key];
+        if (localStorage[fullKey] !== undefined) return localStorage[fullKey] === "true";
+        return defaultValue;
+    }
+
     function override() {
         // Override video element canPlayType() function
         var videoElem = document.createElement("video");
@@ -39,7 +50,7 @@
     }
 
     // Check battery status if battery_only is enabled
-    if (localStorage["enhanced-h264ify-battery_only"] === "true" && navigator.getBattery) {
+    if (getSetting("battery_only", false) && navigator.getBattery) {
         navigator.getBattery().then(function(battery) {
             if (!battery.charging) {
                 override();
@@ -112,7 +123,7 @@
             let reg_match_codec = codecs_util.get_reg_match(type);
             if (disallowed_types.has(reg_match_codec)) return false;
 
-            if (localStorage["enhanced-h264ify-block_60fps"] === "true") {
+            if (getSetting("block_60fps", false)) {
                 let match = /framerate=(\d+)/.exec(original_type);
                 if (match && match[1] > 30) {
                     return false;
@@ -264,10 +275,11 @@
         console.table(table);
 
         // check resolution. discard if it doesn't support max_resolution.
-        if (localStorage["enhanced-h264ify-max_res"] === "true") {
+        if (getSetting("max_res", true)) {
             // override if not set to max
-            if (localStorage["enhanced-h264ify-res_setting"] !== "max") {
-                max_resolution = parseInt(localStorage["enhanced-h264ify-res_setting"], 10);
+            const resSetting = config["res_setting"] || localStorage["enhanced-h264ify-res_setting"] || "1080";
+            if (resSetting !== "max") {
+                max_resolution = parseInt(resSetting, 10);
             }
             console.log("max_resolution", max_resolution, "resolution_data", resolution_data);
             for (let [key, height] of Object.entries(resolution_data)) {
@@ -305,7 +317,7 @@
         // skip if only 1 codec available
         if (available_video_codec > 1) {
             for (let [_key, _name] of Object.entries(codecs_util.video_map)) {
-                if (localStorage[`enhanced-h264ify-block_${_name}`] === "true") {
+                if (getSetting(`block_${_name}`, _name === "av1" || _name === "vp8" || _name === "vp9")) {
                     if (codecs_data[_key]) {
                         console.log(`blocking ${_key}`);
                         disallowed_types.push(...codecs_data[_key]);
@@ -325,7 +337,7 @@
         // skip if only 1 codec available
         if (available_audio_codec > 1) {
             for (let [_key, _name] of Object.entries(codecs_util.audio_map)) {
-                if (localStorage[`enhanced-h264ify-block_${_name}`] === "true") {
+                if (getSetting(`block_${_name}`, false)) {
                     if (codecs_data[_key]) {
                         console.log(`blocking ${_key}`);
                         disallowed_types.push(...codecs_data[_key]);

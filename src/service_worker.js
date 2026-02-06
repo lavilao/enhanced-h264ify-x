@@ -1,25 +1,8 @@
-// Register inject.js to be run on Youtube pages.
-// This way of registration is used instead of registering in manifest.json
-// because this way is supported by Chrome 109, the final version of Chrome
-// released for Windows 7 and 8.
+// Note: The codec check script is now injected by content_script.js
+// to work around Chrome 144+ restrictions on MAIN world content scripts.
+// This approach also works on Chrome 109 (last version for Windows 7/8).
 // See https://stackoverflow.com/a/72607832
 chrome.runtime.onInstalled.addListener(async () => {
-  const scripts = [{
-    id: 'inject',
-    js: [
-      'src/inject/inject_codec_check.js',
-      //'src/inject/inject_ln.js'
-    ],
-    matches: [
-      "*://*.youtube.com/*",
-      "*://*.youtube-nocookie.com/*",
-      "*://*.youtu.be/*"
-    ],
-    allFrames: true,
-    runAt: 'document_start',
-    world: 'MAIN',
-  }];
-  const ids = scripts.map(s => s.id);
-  await chrome.scripting.unregisterContentScripts({ids}).catch(() => {});
-  await chrome.scripting.registerContentScripts(scripts).catch(() => {});
+  // Unregister any previously registered MAIN world scripts to avoid conflicts
+  await chrome.scripting.unregisterContentScripts({ids: ['inject']}).catch(() => {});
 });
